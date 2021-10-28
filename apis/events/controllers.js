@@ -1,5 +1,6 @@
 const Event = require("../../models/Event");
 const mongoose = require("mongoose");
+const { Module } = require("module");
 
 exports.eventListCreate = async (req, res, next) => {
   try {
@@ -61,6 +62,17 @@ exports.eventListDetail = async (req, res, next) => {
   try {
     const eventDetail = await Event.findById({ _id: eventId });
     return res.status(200).json(eventDetail);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.eventListBooked = async (req, res, next) => {
+  try {
+    let full = await Event.find({
+      $expr: { $eq: ["$numOfSeats", "$bookedSeats"] },
+    });
+    return res.status(200).json(full);
   } catch (error) {
     next(error);
   }
